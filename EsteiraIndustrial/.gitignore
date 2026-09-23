@@ -1,1 +1,4 @@
 build/
+.cache/
+sdkconfig.old
+file.txt
