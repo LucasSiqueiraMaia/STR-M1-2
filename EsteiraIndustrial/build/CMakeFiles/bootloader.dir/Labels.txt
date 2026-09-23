@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/CMakeFiles/bootloader
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/CMakeFiles/bootloader.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/CMakeFiles/bootloader-complete.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/lucas/Projects/C/STR-M1-2/EsteiraIndustrial/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
