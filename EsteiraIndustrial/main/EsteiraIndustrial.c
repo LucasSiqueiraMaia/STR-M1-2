@@ -35,6 +35,7 @@
 #include "esp_err.h"
 #include "esp_attr.h"
 #include "driver/touch_sensor_legacy.h"
+#include "driver/gpio.h"
 
 #define TAG "ESTEIRA"
 
@@ -86,6 +87,8 @@
 #define DEADLINE_SORT_US  10000
 #define DEADLINE_ESTOP_US  5000
 #define DEADLINE_HMI_US    5000
+
+#define LED 2
 
 typedef struct {
     const char *name;
@@ -190,7 +193,9 @@ static void task_enc_sense(void *arg)
 
         if (g_load_spike_pending) {
             g_load_spike_pending = false;
+	    gpio_set_level(LED, 1);
             cpu_tight_loop_us(2000);
+	    gpio_set_level(LED, 0);
         }
 
         xQueueSend(qEnc, &release_us, 0);
@@ -271,6 +276,7 @@ static void task_safety(void *arg)
             g_pwm = 0.f;
             g_estop_us = start_us;
             g_estop = true;
+	    gpio_set_level(LED, 1);
             cpu_tight_loop_us(900);
 
             int64_t end_us = esp_timer_get_time();
@@ -406,13 +412,14 @@ static void task_report(void *arg)
 
         if (g_hmi_pending) {
             g_hmi_pending = false;
-            ESP_LOGI(TAG, "HMI rpm=%.1f pwm=%.1f pos=%.1fmm", g_hmi_rpm, g_hmi_pwm, g_hmi_pos);
+            ESP_LOGW(TAG, "HMI rpm=%.1f pwm=%.1f pos=%.1fmm", g_hmi_rpm, g_hmi_pwm, g_hmi_pos);
         }
 
         int64_t now = esp_timer_get_time();
 
         if (g_estop && (now - g_estop_us) > 2000000) {
             g_estop = false;
+	    gpio_set_level(LED, 0);
             ESP_LOGW(TAG, "E-STOP rearmado (esteira volta a operar)");
         }
 
@@ -436,11 +443,13 @@ void app_main(void)
     semHMI   = xSemaphoreCreateBinary();
     configASSERT(qLog && qSort && qEnc && semEStop && semHMI);
 
+    touch_driver_setup();
+    gpio_set_direction(LED, GPIO_MODE_OUTPUT);
+
     xTaskCreatePinnedToCore(task_safety,    "SAFETY",    STK, NULL, PRIO_ESTOP,  &hSAFE, 0);
     xTaskCreatePinnedToCore(task_spd_ctrl,  "SPD_CTRL",  STK, NULL, PRIO_CTRL,   &hCTRL, 0);
     xTaskCreatePinnedToCore(task_sort_act,  "SORT_ACT",  STK, NULL, PRIO_SORT,   &hSORT, 0);
     xTaskCreatePinnedToCore(task_report,    "REPORT",    STK, NULL, PRIO_REPORT, &hREP,  0);
     xTaskCreatePinnedToCore(task_enc_sense, "ENC_SENSE", STK, NULL, PRIO_ENC,    &hENC,  0);
 
-    touch_driver_setup();
 }
